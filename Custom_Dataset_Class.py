@@ -90,15 +90,15 @@ class ConsumerComplaintsDataset1(Dataset):
         train_raw = train_raw[train_raw.len_txt > self.min_len]
         train_raw = train_raw[['consumer_complaint_narrative', 'product']]
         train_raw.reset_index(inplace=True, drop=True)
-        train_raw.at[train_raw['product'] == 'Credit reporting',
+        train_raw.loc[train_raw['product'] == 'Credit reporting',
                      'product'] = 'Credit reporting, credit repair services, or other personal consumer reports'
-        train_raw.at[train_raw['product'] == 'Credit card',
+        train_raw.loc[train_raw['product'] == 'Credit card',
                      'product'] = 'Credit card or prepaid card'
-        train_raw.at[train_raw['product'] == 'Prepaid card',
+        train_raw.loc[train_raw['product'] == 'Prepaid card',
                      'product'] = 'Credit card or prepaid card'
-        train_raw.at[train_raw['product'] == 'Payday loan',
+        train_raw.loc[train_raw['product'] == 'Payday loan',
                      'product'] = 'Payday loan, title loan, or personal loan'
-        train_raw.at[train_raw['product'] == 'Virtual currency',
+        train_raw.loc[train_raw['product'] == 'Virtual currency',
                      'product'] = 'Money transfer, virtual currency, or money service'
         train_raw = train_raw.rename(
             columns={'consumer_complaint_narrative': 'text', 'product': 'label'})
@@ -157,8 +157,9 @@ class ConsumerComplaintsDataset1(Dataset):
         token_type_ids_list.append(previous_token_type_ids)
         targets_list.append(targets)
 
-        if remain and self.approach != 'head':
+        if remain is not None and self.approach != 'head':
             remain = torch.tensor(remain, dtype=torch.long)
+            remain = remain.reshape(-1)
             idxs = range(len(remain)+self.chunk_len)
             idxs = idxs[(self.chunk_len-self.overlap_len-2)
                          ::(self.chunk_len-self.overlap_len-2)]

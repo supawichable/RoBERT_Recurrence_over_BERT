@@ -55,9 +55,11 @@ class Bert_Classification_Model(nn.Module):
             - 
         """
 
-        _, pooled_out = self.bert(
+        output = self.bert(
             ids, attention_mask=mask, token_type_ids=token_type_ids)
         # rh=self.bert_drop(pooled_out)
         # rh=self.fc(rh)
         # rh=self.relu(rh)
-        return self.out(pooled_out)
+        # print("OUTPUT:", self.bert(ids, attention_mask=mask, token_type_ids=token_type_ids))
+        # print("POOLED OUT:", pooled_out)
+        return self.out(output.pooler_output)
